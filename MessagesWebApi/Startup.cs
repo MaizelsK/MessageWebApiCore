@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.Abstract;
+using System.Net.Http;
 
 namespace MessagesWebApi
 {
@@ -46,6 +47,13 @@ namespace MessagesWebApi
             else
             {
                 app.UseHsts();
+            }
+
+            // Создание миграции и базы данных при отсутствии.
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<MessageDbContext>();
+                context.Database.Migrate();
             }
 
             app.UseHttpsRedirection();

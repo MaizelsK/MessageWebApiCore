@@ -32,7 +32,7 @@ namespace Services
                     client.EnableSsl = true;
                     client.Credentials = new NetworkCredential(email, password);
 
-                    client.SendAsync(mailMessage, null);
+                    client.Send(mailMessage);
                 }
             });
         }

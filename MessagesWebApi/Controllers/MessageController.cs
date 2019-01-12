@@ -7,6 +7,7 @@ using DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;
+using Microsoft.EntityFrameworkCore;
 
 namespace MessagesWebApi.Controllers
 {
@@ -27,20 +28,21 @@ namespace MessagesWebApi.Controllers
             _smsService = smsService;
         }
 
-        [HttpGet("messages")]
+        // GET api/message
+        [HttpGet]
         public async Task<IActionResult> AllMessages()
         {
-            return await Task.Run(() =>
-            {
-                var messages = _context.Messages;
+            var messages = await _context.Messages.ToListAsync();
 
-                return Ok(messages);
-            });
+            return Ok(messages);
         }
 
-        [HttpPost(Name = "sendemail")]
-        public async Task<IActionResult> SendEmail(EmailMessageDto emailDto)
+        [HttpPost("sendemail")]
+        public async Task<IActionResult> SendEmail([FromBody]EmailMessageDto emailDto)
         {
+            if (emailDto == null)
+                return BadRequest();
+
             await _emailService.SendEmail(emailDto.To, emailDto.Subject, emailDto.Text);
 
             _context.Messages.Add(new Model.Message
@@ -56,9 +58,12 @@ namespace MessagesWebApi.Controllers
             return Ok();
         }
 
-        [HttpPost(Name = "sendsms")]
-        public async Task<IActionResult> SendSms(SmsMessageDto smsDto)
+        [HttpPost("sendsms")]
+        public async Task<IActionResult> SendSms([FromBody]SmsMessageDto smsDto)
         {
+            if (smsDto == null)
+                return BadRequest();
+
             await _smsService.SendSms(smsDto.To, smsDto.Text);
 
             _context.Messages.Add(new Model.Message
