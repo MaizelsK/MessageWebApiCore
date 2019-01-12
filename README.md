@@ -1,4 +1,4 @@
-# MessageWebApiCore
+# MessageWebApiCore (.NET Core 2.1)
 Homework
 ---
 Создать Web Api Core приложение, которое позволяет отправлять смс и email сообщения, а также получать все сообщения.
